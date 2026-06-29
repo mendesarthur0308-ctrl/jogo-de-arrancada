@@ -1,0 +1,2405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag Race BR - Comprar Modificações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        body {
+            background: #0a0f14;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Orbitron', 'Segoe UI', monospace;
+            padding: 20px;
+        }
+
+        .game-wrapper {
+            background: #141c24;
+            border-radius: 28px;
+            padding: 24px 30px 28px;
+            box-shadow: 0 0 80px rgba(0, 150, 255, 0.12), inset 0 0 100px rgba(0, 50, 80, 0.1);
+            max-width: 1650px;
+            width: 100%;
+            border: 2px solid #1a3344;
+        }
+
+        .painel-digital {
+            background: #0b1219;
+            border-radius: 18px;
+            padding: 14px 24px;
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px 20px;
+            align-items: center;
+            border: 2px solid #1f3a4a;
+            box-shadow: inset 0 0 40px rgba(0, 20, 40, 0.6);
+            font-family: 'Orbitron', monospace;
+        }
+
+        .painel-jogador {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 4px 10px;
+            border-right: 1px solid #1a3344;
+        }
+        .painel-bot {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding: 4px 10px;
+            border-left: 1px solid #1a3344;
+        }
+
+        .painel-central {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 0 14px;
+        }
+
+        .linha-info {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+
+        .label-digital {
+            color: #4a7a8a;
+            font-size: 0.55rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .valor-digital {
+            color: #7ae0f0;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-shadow: 0 0 12px rgba(0, 200, 255, 0.15);
+        }
+
+        .valor-digital.verde {
+            color: #6bff6b;
+        }
+        .valor-digital.vermelho {
+            color: #ff6b4a;
+        }
+        .valor-digital.amarelo {
+            color: #f5c542;
+        }
+        .valor-digital.roxo {
+            color: #b44aff;
+        }
+        .valor-digital.ouro {
+            color: #ffd700;
+        }
+
+        .rotacao-display {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #7ae0f0;
+            text-shadow: 0 0 30px rgba(0, 200, 255, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .velocidade-grande {
+            font-size: 3.4rem;
+            font-weight: 900;
+            color: #ff2a2a;
+            text-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+            line-height: 1;
+        }
+
+        .velocidade-unidade {
+            color: #4a7a8a;
+            font-size: 0.65rem;
+            margin-left: 4px;
+        }
+
+        .marcha-display {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #f5c542;
+        }
+
+        .info-pequena {
+            display: flex;
+            gap: 10px;
+            font-size: 0.55rem;
+        }
+
+        .info-pequena .item {
+            display: flex;
+            align-items: baseline;
+            gap: 3px;
+        }
+
+        .info-pequena .label {
+            color: #3a5a6a;
+            font-size: 0.4rem;
+            text-transform: uppercase;
+        }
+
+        .info-pequena .valor {
+            color: #7ae0f0;
+            font-weight: 700;
+        }
+
+        .barra-rpm {
+            width: 100%;
+            height: 7px;
+            background: #0a1a22;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 1px solid #1a3344;
+        }
+
+        .barra-rpm-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2a9a4a, #f5c542 60%, #ff6b4a 85%, #ff2a2a);
+            border-radius: 5px;
+            transition: width 0.05s;
+            width: 0%;
+        }
+
+        .vs-label {
+            color: #f5c542;
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1800 / 1000;
+            background: #0b1219;
+            border-radius: 18px;
+            box-shadow: inset 0 -4px 0 #0a1a22, 0 14px 35px rgba(0, 0, 0, 0.6);
+            image-rendering: auto;
+            cursor: pointer;
+            margin-bottom: 16px;
+            border: 2px solid #1f3a4a;
+        }
+
+        .painel-controles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            justify-content: center;
+            background: #0b1219;
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: 2px solid #1f3a4a;
+            margin-top: 4px;
+        }
+
+        .grupo {
+            display: flex;
+            align-items: center;
+            gap: 5px 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .grupo label {
+            color: #4a7a8a;
+            font-size: 0.55rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: #0a1a22;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid #1a3344;
+        }
+
+        .grupo select {
+            background: #0a1a22;
+            border: 1px solid #1a3344;
+            color: #7ae0f0;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            font-family: 'Orbitron', monospace;
+            outline: none;
+            transition: 0.15s;
+            min-width: 55px;
+            cursor: pointer;
+        }
+
+        .grupo select option {
+            background: #0b1219;
+        }
+
+        .grupo input[type="range"] {
+            padding: 0;
+            background: transparent;
+            border: none;
+            width: 70px;
+            accent-color: #f5c542;
+        }
+
+        .btn-corrida {
+            background: linear-gradient(180deg, #df7d2a, #b85e1a);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #0a0f14;
+            box-shadow: 0 4px 0 #6a3a0a, 0 5px 18px rgba(0, 0, 0, 0.5);
+            transition: 0.08s linear;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .btn-corrida:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #6a3a0a;
+        }
+
+        .btn-corrida:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #6a3a0a;
+            pointer-events: none;
+        }
+
+        .btn-nova-partida {
+            background: linear-gradient(180deg, #2a7fc9, #1a5a8a);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #eef7fc;
+            box-shadow: 0 4px 0 #0a3a5a, 0 5px 18px rgba(0, 0, 0, 0.5);
+            transition: 0.08s linear;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .btn-nova-partida:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #0a3a5a;
+        }
+
+        .btn-nova-partida:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #0a3a5a;
+            pointer-events: none;
+        }
+
+        .btn-trocar-carro {
+            background: linear-gradient(180deg, #6bff6b, #3a9a3a);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #0a0f14;
+            box-shadow: 0 4px 0 #1a5a1a, 0 5px 18px rgba(0, 0, 0, 0.5);
+            transition: 0.08s linear;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .btn-trocar-carro:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #1a5a1a;
+        }
+
+        .btn-trocar-carro:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #1a5a1a;
+            pointer-events: none;
+        }
+
+        .btn-reset-ia {
+            background: linear-gradient(180deg, #b44aff, #7a1a9a);
+            border: none;
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #eef7fc;
+            box-shadow: 0 4px 0 #4a0a6a, 0 5px 18px rgba(0, 0, 0, 0.5);
+            transition: 0.08s linear;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .btn-reset-ia:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #4a0a6a;
+        }
+
+        .btn-reset-ia:disabled {
+            opacity: 0.5;
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #4a0a6a;
+            pointer-events: none;
+        }
+
+        .btn-comprar {
+            background: linear-gradient(180deg, #ffd700, #c9a000);
+            border: none;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.6rem;
+            color: #0a0f14;
+            box-shadow: 0 3px 0 #8a6a00, 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: 0.08s linear;
+            cursor: pointer;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', monospace;
+            white-space: nowrap;
+        }
+
+        .btn-comprar:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #8a6a00;
+        }
+
+        .btn-comprar:disabled {
+            opacity: 0.4;
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #8a6a00;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+        .btn-comprar.comprado {
+            background: linear-gradient(180deg, #6bff6b, #3a9a3a);
+            border-color: #6bff6b;
+            color: #0a0f14;
+        }
+
+        .btn-comprar.comprado:disabled {
+            opacity: 0.7;
+        }
+
+        .status-templates {
+            text-align: center;
+            margin-top: 6px;
+            font-size: 0.55rem;
+            color: #3a5a6a;
+        }
+
+        .debug-info {
+            background: #0a1a22;
+            border: 1px solid #1a3344;
+            border-radius: 8px;
+            padding: 8px 14px;
+            margin-top: 8px;
+            font-size: 0.55rem;
+            color: #4a7a8a;
+            font-family: 'Courier New', monospace;
+            max-height: 70px;
+            overflow-y: auto;
+            line-height: 1.5;
+        }
+
+        .instrucoes {
+            text-align: center;
+            margin-top: 6px;
+            font-size: 0.6rem;
+            color: #4a7a8a;
+            background: #0a1a22;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid #1a3344;
+        }
+
+        .instrucoes code {
+            color: #7ae0f0;
+            background: #0a1219;
+            padding: 1px 6px;
+            border-radius: 4px;
+        }
+
+        .speed-indicator {
+            color: #ff2a2a;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .botoes-container {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .ia-level {
+            color: #b44aff;
+            font-size: 0.6rem;
+            font-weight: 700;
+            background: #1a0a2a;
+            padding: 2px 12px;
+            border-radius: 12px;
+            border: 1px solid #4a1a6a;
+        }
+
+        .ia-level .nivel {
+            color: #f5c542;
+        }
+
+        .dificuldade-auto {
+            color: #ff69b4;
+            font-size: 0.5rem;
+            font-weight: 700;
+            background: #1a0a0a;
+            padding: 2px 10px;
+            border-radius: 12px;
+            border: 1px solid #4a1a2a;
+            animation: pulse-dificuldade 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-dificuldade {
+            0% { opacity: 0.6; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .dinheiro-display {
+            background: #0a1a22;
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            padding: 4px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dinheiro-display .moeda {
+            color: #ffd700;
+            font-size: 1rem;
+        }
+
+        .dinheiro-display .valor {
+            color: #ffd700;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .aposta-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #0a1a22;
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid #1a3344;
+        }
+
+        .aposta-container label {
+            color: #ffd700;
+            font-size: 0.55rem;
+        }
+
+        .aposta-container select {
+            background: #0a1a22;
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 0.65rem;
+            font-family: 'Orbitron', monospace;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .aposta-container select option {
+            background: #0b1219;
+        }
+
+        .resultado-aposta {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+
+        .resultado-aposta.ganhou {
+            color: #6bff6b;
+            background: #0a1a0a;
+            border: 1px solid #6bff6b;
+        }
+
+        .resultado-aposta.perdeu {
+            color: #ff6b4a;
+            background: #1a0a0a;
+            border: 1px solid #ff6b4a;
+        }
+
+        .dificuldade-badge {
+            color: #ff69b4;
+            font-size: 0.55rem;
+            font-weight: 700;
+            background: #1a0a0a;
+            padding: 2px 12px;
+            border-radius: 12px;
+            border: 1px solid #4a1a2a;
+        }
+
+        .revanche-counter {
+            color: #f5c542;
+            font-size: 0.5rem;
+            background: #1a1a0a;
+            padding: 2px 10px;
+            border-radius: 12px;
+            border: 1px solid #4a4a1a;
+        }
+
+        .custo-label {
+            color: #ffd700;
+            font-size: 0.55rem;
+            font-weight: 700;
+            background: #1a1a0a;
+            padding: 2px 10px;
+            border-radius: 8px;
+            border: 1px solid #4a4a1a;
+        }
+
+        .mod-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            background: #0a1a22;
+            padding: 3px 8px;
+            border-radius: 10px;
+            border: 1px solid #1a3344;
+        }
+
+        .mod-container .mod-label {
+            color: #4a7a8a;
+            font-size: 0.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .mod-container select {
+            background: #0a1a22;
+            border: 1px solid #1a3344;
+            color: #7ae0f0;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.55rem;
+            font-family: 'Orbitron', monospace;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .mod-container select option {
+            background: #0b1219;
+        }
+
+        .mod-container .btn-comprar {
+            padding: 3px 10px;
+            font-size: 0.5rem;
+        }
+
+        .mod-container .preco-label {
+            color: #ffd700;
+            font-size: 0.55rem;
+            font-weight: 700;
+        }
+
+        .selecionado-badge {
+            color: #6bff6b;
+            font-size: 0.45rem;
+            background: #0a1a0a;
+            padding: 1px 8px;
+            border-radius: 8px;
+            border: 1px solid #6bff6b;
+        }
+
+        @media (max-width: 1000px) {
+            .game-wrapper {
+                padding: 14px;
+            }
+            .painel-digital {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                padding: 10px;
+            }
+            .painel-jogador {
+                border-right: none;
+                border-bottom: 1px solid #1a3344;
+            }
+            .painel-central {
+                grid-column: span 2;
+                border: none;
+                padding: 6px 0;
+                border-top: 1px solid #1a3344;
+                border-bottom: 1px solid #1a3344;
+            }
+            .painel-bot {
+                border-left: none;
+            }
+            .velocidade-grande {
+                font-size: 2.4rem;
+            }
+            .rotacao-display {
+                font-size: 1.4rem;
+            }
+            .botoes-container {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .btn-corrida,
+            .btn-nova-partida,
+            .btn-trocar-carro,
+            .btn-reset-ia {
+                width: 100%;
+                text-align: center;
+                font-size: 0.7rem;
+                padding: 6px 12px;
+            }
+            .dinheiro-display {
+                padding: 2px 10px;
+            }
+            .dinheiro-display .valor {
+                font-size: 0.9rem;
+            }
+            .mod-container {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .painel-digital {
+                grid-template-columns: 1fr;
+            }
+            .painel-central {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper">
+
+    <div class="painel-digital" id="painelDigital">
+        <div class="painel-jogador">
+            <div class="linha-info">
+                <span class="label-digital">🏁 JOGADOR</span>
+                <span class="valor-digital verde" id="playerStatus">●</span>
+            </div>
+            <div class="linha-info">
+                <span class="label-digital">RPM</span>
+                <span class="rotacao-display" id="rpmDisplay">0</span>
+            </div>
+            <div class="linha-info">
+                <span class="label-digital">VEL</span>
+                <span class="valor-digital amarelo" id="playerVel">0</span>
+                <span style="color:#3a5a6a;font-size:0.45rem;">km/h</span>
+            </div>
+            <div class="linha-info">
+                <span class="label-digital">MARCHA</span>
+                <span class="valor-digital" id="marchaDisplay" style="font-size:1rem;">N</span>
+            </div>
+        </div>
+
+        <div class="painel-central">
+            <div class="vs-label">⚡ VS ⚡</div>
+            <div class="info-pequena">
+                <div class="item"><span class="label">DIST</span><span class="valor" id="distanciaDisplay">0.0m</span></div>
+                <div class="item"><span class="label">TEMPO</span><span class="valor" id="tempoDisplay">0.00s</span></div>
+            </div>
+            <div class="barra-rpm">
+                <div class="barra-rpm-fill" id="barraRPM"></div>
+            </div>
+            <div style="display:flex;gap:16px;font-size:0.5rem;">
+                <span style="color:#3a5a6a;">TURBO: <span id="turboStatus" style="color:#7ae0f0;">OFF</span></span>
+                <span style="color:#3a5a6a;">POT: <span id="potenciaDisplay" style="color:#f5c542;">80</span>cv</span>
+                <span class="speed-indicator">🔥 HIPER VEL</span>
+            </div>
+        </div>
+
+        <div class="painel-bot">
+            <div class="linha-info">
+                <span class="label-digital">🤖 IA</span>
+                <span class="valor-digital vermelho" id="botStatus">●</span>
+                <span class="ia-level">NÍVEL <span class="nivel" id="iaNivel">1</span></span>
+                <span class="dificuldade-auto">⚡ AUTO</span>
+            </div>
+            <div class="linha-info">
+                <span class="label-digital">CARRO</span>
+                <span class="valor-digital" id="botNome" style="font-size:0.7rem; color:#ff6b4a;">Carregando...</span>
+            </div>
+            <div class="linha-info">
+                <span class="label-digital">VEL</span>
+                <span class="valor-digital" id="botVel" style="color:#ff6b4a;">0</span>
+                <span style="color:#3a5a6a;font-size:0.45rem;">km/h</span>
+            </div>
+            <div class="linha-info">
+                <span class="label-digital">POT</span>
+                <span class="valor-digital roxo" id="botPot">0</span>
+                <span style="color:#3a5a6a;font-size:0.45rem;">cv</span>
+            </div>
+            <div class="linha-info">
+                <span class="revanche-counter">🔄 Revanches: <span id="revancheCount">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAINEL DE DINHEIRO E APOSTAS -->
+    <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:12px;">
+        <div class="dinheiro-display">
+            <span class="moeda">💰</span>
+            <span class="valor" id="dinheiroDisplay">10000</span>
+        </div>
+        <div class="aposta-container">
+            <label>🎯 APOSTA</label>
+            <select id="apostaSelect">
+                <option value="50">R$ 50</option>
+                <option value="100" selected>R$ 100</option>
+                <option value="200">R$ 200</option>
+                <option value="500">R$ 500</option>
+                <option value="1000">R$ 1000</option>
+                <option value="2000">R$ 2000</option>
+                <option value="5000">R$ 5000</option>
+                <option value="10000">R$ 10000</option>
+            </select>
+        </div>
+        <div id="resultadoAposta" class="resultado-aposta" style="display:none;"></div>
+        <div class="dificuldade-badge" id="dificuldadeBadge">📈 Dificuldade: Fácil</div>
+        <div style="color:#4a7a8a; font-size:0.55rem; display:flex; align-items:center; gap:8px;">
+            <span>🏆 Vitórias: <span id="vitoriasDisplay" style="color:#6bff6b;">0</span></span>
+            <span>💀 Derrotas: <span id="derrotasDisplay" style="color:#ff6b4a;">0</span></span>
+        </div>
+    </div>
+
+    <canvas id="dragCanvas" width="1800" height="1000"></canvas>
+
+    <div class="instrucoes">
+        📁 Coloque suas imagens PNG na pasta <code>img/</code> com os nomes: 
+        <code>gol.png</code>, <code>fusca.png</code>, <code>opala.png</code>, <code>chevette.png</code>, <code>brasilia.png</code>, <code>monza.png</code>, <code>civic.png</code>
+        <br>💰 <strong>COMPRE MODIFICAÇÕES!</strong> Selecione o nível desejado e depois clique em COMPRAR.
+        <br>📈 <strong>DIFICULDADE AUTOMÁTICA!</strong> A cada partida e REVANCHE o jogo fica mais difícil!
+    </div>
+
+    <div class="debug-info" id="debugInfo">
+        🟡 Aguardando carregamento das imagens...
+    </div>
+
+    <div class="painel-controles">
+        <!-- CARRO -->
+        <div class="mod-container">
+            <span class="mod-label">🚗</span>
+            <select id="carroSelect">
+                <option value="gol">Gol</option>
+                <option value="fusca">Fusca</option>
+                <option value="opala" selected>Opala</option>
+                <option value="chevette">Chevette</option>
+                <option value="brasilia">Brasília</option>
+                <option value="monza">Monza</option>
+                <option value="civic">Civic</option>
+            </select>
+            <button class="btn-comprar" id="btnComprarCarro">💰 COMPRAR</button>
+            <span class="custo-label" id="custoCarro">R$ 500</span>
+            <span class="selecionado-badge" id="statusCarro">✅ OK</span>
+        </div>
+
+        <!-- MOTOR -->
+        <div class="mod-container">
+            <span class="mod-label">⚙️</span>
+            <select id="motorSelect">
+                <option value="1.0">1.0 (0cv)</option>
+                <option value="1.6" selected>1.6 (+15cv)</option>
+                <option value="2.0">2.0 (+35cv)</option>
+                <option value="4.1">4.1 (+60cv)</option>
+                <option value="5.0">5.0 (+90cv)</option>
+            </select>
+            <button class="btn-comprar" id="btnComprarMotor">💰 COMPRAR</button>
+            <span class="custo-label" id="custoMotor">R$ 300</span>
+            <span class="selecionado-badge" id="statusMotor">✅ OK</span>
+        </div>
+
+        <!-- TURBO -->
+        <div class="mod-container">
+            <span class="mod-label">🌀</span>
+            <select id="turboSelect">
+                <option value="0">OFF (1.0x)</option>
+                <option value="0.6" selected>MÉD (1.4x)</option>
+                <option value="1.2">FORTE (1.9x)</option>
+                <option value="2.0">MONSTER (2.6x)</option>
+            </select>
+            <button class="btn-comprar" id="btnComprarTurbo">💰 COMPRAR</button>
+            <span class="custo-label" id="custoTurbo">R$ 400</span>
+            <span class="selecionado-badge" id="statusTurbo">✅ OK</span>
+        </div>
+
+        <!-- PRESSÃO -->
+        <div class="mod-container">
+            <span class="mod-label">⛽</span>
+            <input type="range" id="pressaoTurbo" min="0.5" max="2.5" step="0.1" value="1.2">
+            <span id="pressaoLabel" style="color:#7ae0f0;font-weight:700;min-width:20px;font-size:0.6rem;">1.2</span>
+            <button class="btn-comprar" id="btnComprarPressao">💰 COMPRAR</button>
+            <span class="custo-label" id="custoPressao">R$ 140</span>
+            <span class="selecionado-badge" id="statusPressao">✅ OK</span>
+        </div>
+
+        <!-- RELAÇÃO -->
+        <div class="mod-container">
+            <span class="mod-label">🔧</span>
+            <select id="relacaoSelect">
+                <option value="3.0">3.0 (Curta)</option>
+                <option value="3.7" selected>3.7 (Média)</option>
+                <option value="4.5">4.5 (Longa)</option>
+            </select>
+            <button class="btn-comprar" id="btnComprarRelacao">💰 COMPRAR</button>
+            <span class="custo-label" id="custoRelacao">R$ 250</span>
+            <span class="selecionado-badge" id="statusRelacao">✅ OK</span>
+        </div>
+
+        <!-- PNEUS -->
+        <div class="mod-container">
+            <span class="mod-label">🛞</span>
+            <select id="pneuSelect">
+                <option value="0.85">DURO (0.85x)</option>
+                <option value="1.0" selected>MED (1.0x)</option>
+                <option value="1.15">MACIO (1.15x)</option>
+            </select>
+            <button class="btn-comprar" id="btnComprarPneu">💰 COMPRAR</button>
+            <span class="custo-label" id="custoPneu">R$ 200</span>
+            <span class="selecionado-badge" id="statusPneu">✅ OK</span>
+        </div>
+
+        <!-- BOTÕES PRINCIPAIS -->
+        <div class="grupo" style="flex-direction:column; gap:4px; width:100%;">
+            <div class="botoes-container" style="width:100%;">
+                <button class="btn-corrida" id="btnLargada" style="flex:1;">🏁 ARRANCADA</button>
+                <button class="btn-nova-partida" id="btnNovaPartida" style="flex:1;">🔄 NOVA PARTIDA</button>
+            </div>
+            <div class="botoes-container" style="width:100%;">
+                <button class="btn-trocar-carro" id="btnTrocarCarro" style="flex:1;">🚗 TROCAR CARRO</button>
+                <button class="btn-reset-ia" id="btnResetIA" style="flex:1;">🔄 RESETAR IA</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-templates">
+        📁 Imagens: <span id="templateCount">0/7</span> carregadas
+        <span style="margin-left:20px; color:#b44aff; font-size:0.6rem;">🧠 IA Nível: <span id="iaNivelFooter">1</span></span>
+        <span style="margin-left:10px; color:#4a7a8a; font-size:0.6rem;">| Partidas: <span id="partidasCount">0</span></span>
+        <span style="margin-left:10px; color:#ffd700; font-size:0.6rem;">| 💰 <span id="dinheiroFooter">10000</span></span>
+        <span style="margin-left:10px; color:#ff69b4; font-size:0.6rem;">| 📈 <span id="dificuldadeFooter">Fácil</span></span>
+        <span style="margin-left:10px; color:#f5c542; font-size:0.6rem;">| 🔄 Revanches: <span id="revancheFooter">0</span></span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('dragCanvas');
+        const ctx = canvas.getContext('2d');
+        const W = 1800,
+            H = 1000;
+
+        // ===== DOM ELEMENTS =====
+        const carroSelect = document.getElementById('carroSelect');
+        const motorSelect = document.getElementById('motorSelect');
+        const turboSelect = document.getElementById('turboSelect');
+        const pressaoTurbo = document.getElementById('pressaoTurbo');
+        const pressaoLabel = document.getElementById('pressaoLabel');
+        const relacaoSelect = document.getElementById('relacaoSelect');
+        const pneuSelect = document.getElementById('pneuSelect');
+        const btnLargada = document.getElementById('btnLargada');
+        const btnNovaPartida = document.getElementById('btnNovaPartida');
+        const btnTrocarCarro = document.getElementById('btnTrocarCarro');
+        const btnResetIA = document.getElementById('btnResetIA');
+        const debugInfo = document.getElementById('debugInfo');
+
+        const btnComprarCarro = document.getElementById('btnComprarCarro');
+        const btnComprarMotor = document.getElementById('btnComprarMotor');
+        const btnComprarTurbo = document.getElementById('btnComprarTurbo');
+        const btnComprarPressao = document.getElementById('btnComprarPressao');
+        const btnComprarRelacao = document.getElementById('btnComprarRelacao');
+        const btnComprarPneu = document.getElementById('btnComprarPneu');
+
+        const custoCarro = document.getElementById('custoCarro');
+        const custoMotor = document.getElementById('custoMotor');
+        const custoTurbo = document.getElementById('custoTurbo');
+        const custoPressao = document.getElementById('custoPressao');
+        const custoRelacao = document.getElementById('custoRelacao');
+        const custoPneu = document.getElementById('custoPneu');
+
+        const statusCarro = document.getElementById('statusCarro');
+        const statusMotor = document.getElementById('statusMotor');
+        const statusTurbo = document.getElementById('statusTurbo');
+        const statusPressao = document.getElementById('statusPressao');
+        const statusRelacao = document.getElementById('statusRelacao');
+        const statusPneu = document.getElementById('statusPneu');
+
+        const rpmDisplay = document.getElementById('rpmDisplay');
+        const marchaDisplay = document.getElementById('marchaDisplay');
+        const barraRPM = document.getElementById('barraRPM');
+        const turboStatus = document.getElementById('turboStatus');
+        const distanciaDisplay = document.getElementById('distanciaDisplay');
+        const tempoDisplay = document.getElementById('tempoDisplay');
+        const potenciaDisplay = document.getElementById('potenciaDisplay');
+        const templateCount = document.getElementById('templateCount');
+
+        const botStatus = document.getElementById('botStatus');
+        const botNome = document.getElementById('botNome');
+        const botVel = document.getElementById('botVel');
+        const botPot = document.getElementById('botPot');
+        const playerStatus = document.getElementById('playerStatus');
+        const playerVel = document.getElementById('playerVel');
+        const iaNivel = document.getElementById('iaNivel');
+        const iaNivelFooter = document.getElementById('iaNivelFooter');
+        const partidasCount = document.getElementById('partidasCount');
+        const dificuldadeBadge = document.getElementById('dificuldadeBadge');
+        const dificuldadeFooter = document.getElementById('dificuldadeFooter');
+        const revancheCount = document.getElementById('revancheCount');
+        const revancheFooter = document.getElementById('revancheFooter');
+
+        const dinheiroDisplay = document.getElementById('dinheiroDisplay');
+        const dinheiroFooter = document.getElementById('dinheiroFooter');
+        const apostaSelect = document.getElementById('apostaSelect');
+        const resultadoAposta = document.getElementById('resultadoAposta');
+        const vitoriasDisplay = document.getElementById('vitoriasDisplay');
+        const derrotasDisplay = document.getElementById('derrotasDisplay');
+
+        // ===== PREÇOS POR NÍVEL =====
+        const precos = {
+            carro: {
+                'gol': 500,
+                'fusca': 500,
+                'opala': 500,
+                'chevette': 500,
+                'brasilia': 500,
+                'monza': 500,
+                'civic': 500
+            },
+            motor: {
+                '1.0': 100,
+                '1.6': 300,
+                '2.0': 600,
+                '4.1': 1000,
+                '5.0': 1500
+            },
+            turbo: {
+                '0': 0,
+                '0.6': 400,
+                '1.2': 800,
+                '2.0': 1400
+            },
+            pressao: {
+                '0.5': 50,
+                '0.6': 60,
+                '0.7': 70,
+                '0.8': 80,
+                '0.9': 90,
+                '1.0': 100,
+                '1.1': 120,
+                '1.2': 140,
+                '1.3': 160,
+                '1.4': 180,
+                '1.5': 200,
+                '1.6': 230,
+                '1.7': 260,
+                '1.8': 300,
+                '1.9': 350,
+                '2.0': 400,
+                '2.1': 460,
+                '2.2': 520,
+                '2.3': 580,
+                '2.4': 650,
+                '2.5': 720
+            },
+            relacao: {
+                '3.0': 150,
+                '3.7': 250,
+                '4.5': 400
+            },
+            pneu: {
+                '0.85': 100,
+                '1.0': 200,
+                '1.15': 350
+            }
+        };
+
+        // ===== ITENS COMPRADOS =====
+        let itensComprados = {
+            carro: {},
+            motor: {},
+            turbo: {},
+            pressao: {},
+            relacao: {},
+            pneu: {}
+        };
+
+        // ===== VALORES ATUAIS =====
+        let valoresAtuais = {
+            carro: 'opala',
+            motor: '1.6',
+            turbo: '0.6',
+            pressao: 1.2,
+            relacao: '3.7',
+            pneu: '1.0'
+        };
+
+        // ===== FUNÇÕES =====
+        function getValorSelecionado(tipo) {
+            const selectors = {
+                carro: carroSelect,
+                motor: motorSelect,
+                turbo: turboSelect,
+                pressao: pressaoTurbo,
+                relacao: relacaoSelect,
+                pneu: pneuSelect
+            };
+            const el = selectors[tipo];
+            if (!el) return null;
+            if (tipo === 'pressao') return parseFloat(el.value).toFixed(1);
+            return el.value;
+        }
+
+        function getPrecoItem(tipo) {
+            const valor = getValorSelecionado(tipo);
+            if (valor === null) return 0;
+            return precos[tipo]?.[valor] || 0;
+        }
+
+        function getNomeItem(tipo, valor) {
+            const nomes = {
+                carro: { 'gol': 'Gol', 'fusca': 'Fusca', 'opala': 'Opala', 'chevette': 'Chevette', 'brasilia': 'Brasília', 'monza': 'Monza', 'civic': 'Civic' },
+                motor: { '1.0': 'Motor 1.0', '1.6': 'Motor 1.6', '2.0': 'Motor 2.0', '4.1': 'Motor 4.1', '5.0': 'Motor 5.0' },
+                turbo: { '0': 'Sem Turbo', '0.6': 'Turbo Médio', '1.2': 'Turbo Forte', '2.0': 'Turbo Monster' },
+                pressao: { '0.5': 'Pressão 0.5', '0.6': 'Pressão 0.6', '0.7': 'Pressão 0.7', '0.8': 'Pressão 0.8', '0.9': 'Pressão 0.9', '1.0': 'Pressão 1.0', '1.1': 'Pressão 1.1', '1.2': 'Pressão 1.2', '1.3': 'Pressão 1.3', '1.4': 'Pressão 1.4', '1.5': 'Pressão 1.5', '1.6': 'Pressão 1.6', '1.7': 'Pressão 1.7', '1.8': 'Pressão 1.8', '1.9': 'Pressão 1.9', '2.0': 'Pressão 2.0', '2.1': 'Pressão 2.1', '2.2': 'Pressão 2.2', '2.3': 'Pressão 2.3', '2.4': 'Pressão 2.4', '2.5': 'Pressão 2.5' },
+                relacao: { '3.0': 'Relação 3.0 (Curta)', '3.7': 'Relação 3.7 (Média)', '4.5': 'Relação 4.5 (Longa)' },
+                pneu: { '0.85': 'Pneus Duros', '1.0': 'Pneus Médios', '1.15': 'Pneus Macios' }
+            };
+            return nomes[tipo]?.[valor] || valor;
+        }
+
+        function isItemComprado(tipo, valor) {
+            return itensComprados[tipo]?.[valor] === true;
+        }
+
+        function comprarItem(tipo) {
+            if (running) {
+                alert('⛔ Não é possível comprar durante uma corrida!');
+                return;
+            }
+
+            const valor = getValorSelecionado(tipo);
+            if (valor === null) return;
+
+            const preco = getPrecoItem(tipo);
+            const nome = getNomeItem(tipo, valor);
+
+            if (isItemComprado(tipo, valor)) {
+                alert('✅ Você já possui "' + nome + '"!');
+                return;
+            }
+
+            if (dinheiro < preco) {
+                alert('💰 Dinheiro insuficiente! Você precisa de R$ ' + preco + ' para comprar "' + nome + '".\nSeu saldo: R$ ' + dinheiro);
+                return;
+            }
+
+            if (!confirm('💰 Deseja comprar "' + nome + '" por R$ ' + preco + '?\nSeu saldo atual: R$ ' + dinheiro)) {
+                return;
+            }
+
+            dinheiro -= preco;
+            itensComprados[tipo][valor] = true;
+            atualizarDinheiro();
+            atualizarStatus();
+
+            // Salva o valor atual
+            if (tipo === 'carro') {
+                valoresAtuais.carro = valor;
+            } else if (tipo === 'motor') {
+                valoresAtuais.motor = valor;
+            } else if (tipo === 'turbo') {
+                valoresAtuais.turbo = valor;
+            } else if (tipo === 'pressao') {
+                valoresAtuais.pressao = parseFloat(valor);
+            } else if (tipo === 'relacao') {
+                valoresAtuais.relacao = valor;
+            } else if (tipo === 'pneu') {
+                valoresAtuais.pneu = valor;
+            }
+
+            atualizarParametros();
+            desenharCena();
+            atualizarBotoesCompra();
+
+            console.log('✅ Comprou: "' + nome + '" por R$ ' + preco);
+            console.log('💰 Saldo: R$ ' + dinheiro);
+
+            const msg = document.createElement('div');
+            msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0b1219;border:2px solid #ffd700;border-radius:16px;padding:20px 40px;color:#ffd700;font-family:Orbitron;font-size:1.2rem;z-index:1000;text-align:center;box-shadow:0 0 60px rgba(255,215,0,0.2);';
+            msg.innerHTML = '✅ <br>"' + nome + '" COMPRADO!<br><span style="font-size:0.8rem;color:#7ae0f0;">-R$ ' + preco + '</span>';
+            document.body.appendChild(msg);
+            setTimeout(() => {
+                msg.style.transition = 'opacity 0.5s';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            }, 2000);
+        }
+
+        function atualizarStatus() {
+            const statusMap = {
+                carro: statusCarro,
+                motor: statusMotor,
+                turbo: statusTurbo,
+                pressao: statusPressao,
+                relacao: statusRelacao,
+                pneu: statusPneu
+            };
+
+            const selectors = {
+                carro: carroSelect,
+                motor: motorSelect,
+                turbo: turboSelect,
+                pressao: pressaoTurbo,
+                relacao: relacaoSelect,
+                pneu: pneuSelect
+            };
+
+            for (const [tipo, el] of Object.entries(selectors)) {
+                const valor = getValorSelecionado(tipo);
+                const statusEl = statusMap[tipo];
+                if (valor && isItemComprado(tipo, valor)) {
+                    statusEl.textContent = '✅ OK';
+                    statusEl.style.borderColor = '#6bff6b';
+                    statusEl.style.color = '#6bff6b';
+                } else {
+                    statusEl.textContent = '❌ COMPRAR';
+                    statusEl.style.borderColor = '#ff6b4a';
+                    statusEl.style.color = '#ff6b4a';
+                }
+            }
+        }
+
+        function atualizarBotoesCompra() {
+            const botoes = {
+                carro: btnComprarCarro,
+                motor: btnComprarMotor,
+                turbo: btnComprarTurbo,
+                pressao: btnComprarPressao,
+                relacao: btnComprarRelacao,
+                pneu: btnComprarPneu
+            };
+
+            const labels = {
+                carro: custoCarro,
+                motor: custoMotor,
+                turbo: custoTurbo,
+                pressao: custoPressao,
+                relacao: custoRelacao,
+                pneu: custoPneu
+            };
+
+            for (const [tipo, botao] of Object.entries(botoes)) {
+                const valor = getValorSelecionado(tipo);
+                const preco = getPrecoItem(tipo);
+                const label = labels[tipo];
+
+                if (label) label.textContent = 'R$ ' + preco;
+
+                if (valor && isItemComprado(tipo, valor)) {
+                    botao.textContent = '✅ OK';
+                    botao.className = 'btn-comprar comprado';
+                    botao.disabled = true;
+                } else {
+                    botao.textContent = '💰 R$' + preco;
+                    botao.className = 'btn-comprar';
+                    botao.disabled = (dinheiro < preco);
+                }
+            }
+
+            atualizarStatus();
+        }
+
+        // ===== SISTEMA DE DINHEIRO =====
+        let dinheiro = 10000;
+        let vitorias = 0;
+        let derrotas = 0;
+        let revancheCounter = 0;
+
+        function atualizarDinheiro() {
+            dinheiroDisplay.textContent = dinheiro;
+            dinheiroFooter.textContent = dinheiro;
+            vitoriasDisplay.textContent = vitorias;
+            derrotasDisplay.textContent = derrotas;
+            revancheCount.textContent = revancheCounter;
+            revancheFooter.textContent = revancheCounter;
+
+            const valorAposta = parseInt(apostaSelect.value);
+            if (valorAposta > dinheiro) {
+                const options = apostaSelect.options;
+                for (let i = options.length - 1; i >= 0; i--) {
+                    if (parseInt(options[i].value) <= dinheiro) {
+                        apostaSelect.value = options[i].value;
+                        break;
+                    }
+                }
+                if (dinheiro < 50) {
+                    apostaSelect.disabled = true;
+                    apostaSelect.value = '0';
+                }
+            } else {
+                apostaSelect.disabled = false;
+            }
+
+            atualizarBotoesCompra();
+        }
+
+        function mostrarResultadoAposta(ganhou, valor) {
+            resultadoAposta.style.display = 'block';
+            if (ganhou) {
+                resultadoAposta.className = 'resultado-aposta ganhou';
+                resultadoAposta.textContent = '✅ GANHOU +R$ ' + valor;
+            } else {
+                resultadoAposta.className = 'resultado-aposta perdeu';
+                resultadoAposta.textContent = '❌ PERDEU -R$ ' + valor;
+            }
+            setTimeout(() => {
+                resultadoAposta.style.display = 'none';
+            }, 3000);
+        }
+
+        function processarAposta(vencedor) {
+            const valorAposta = parseInt(apostaSelect.value);
+            if (valorAposta > dinheiro) {
+                return false;
+            }
+
+            if (vencedor === 'player') {
+                const ganho = valorAposta * 2;
+                dinheiro += ganho;
+                vitorias++;
+                mostrarResultadoAposta(true, ganho);
+                atualizarDinheiro();
+                return true;
+            } else if (vencedor === 'bot') {
+                dinheiro -= valorAposta;
+                derrotas++;
+                mostrarResultadoAposta(false, valorAposta);
+                atualizarDinheiro();
+                return true;
+            } else {
+                mostrarResultadoAposta(true, 0);
+                return true;
+            }
+        }
+
+        // ===== SISTEMA DE DIFICULDADE AUTOMÁTICA =====
+        const niveisDificuldade = [
+            { nivel: 1, nome: 'Fácil', fator: 0.5 },
+            { nivel: 2, nome: 'Médio', fator: 0.7 },
+            { nivel: 3, nome: 'Médio-Alto', fator: 0.9 },
+            { nivel: 4, nome: 'Difícil', fator: 1.1 },
+            { nivel: 5, nome: 'Muito Difícil', fator: 1.3 },
+            { nivel: 6, nome: 'Desafiador', fator: 1.5 },
+            { nivel: 7, nome: 'Extremo', fator: 1.7 },
+            { nivel: 8, nome: 'Lendário', fator: 2.0 },
+            { nivel: 9, nome: 'Mítico', fator: 2.3 },
+            { nivel: 10, nome: 'Impossível', fator: 2.7 }
+        ];
+
+        function getDificuldadePorNivel(nivel) {
+            const idx = Math.min(nivel - 1, niveisDificuldade.length - 1);
+            return niveisDificuldade[idx];
+        }
+
+        function atualizarDificuldadeBadge(nivel) {
+            const info = getDificuldadePorNivel(nivel);
+            dificuldadeBadge.textContent = '📈 Dificuldade: ' + info.nome;
+            dificuldadeFooter.textContent = info.nome;
+
+            if (nivel <= 2) {
+                dificuldadeBadge.style.borderColor = '#6bff6b';
+                dificuldadeBadge.style.color = '#6bff6b';
+            } else if (nivel <= 4) {
+                dificuldadeBadge.style.borderColor = '#f5c542';
+                dificuldadeBadge.style.color = '#f5c542';
+            } else if (nivel <= 6) {
+                dificuldadeBadge.style.borderColor = '#ff6b4a';
+                dificuldadeBadge.style.color = '#ff6b4a';
+            } else if (nivel <= 8) {
+                dificuldadeBadge.style.borderColor = '#b44aff';
+                dificuldadeBadge.style.color = '#b44aff';
+            } else {
+                dificuldadeBadge.style.borderColor = '#ff2a2a';
+                dificuldadeBadge.style.color = '#ff2a2a';
+                dificuldadeBadge.style.animation = 'pulse-dificuldade 0.5s ease-in-out infinite alternate';
+            }
+        }
+
+        // ===== ESTADO DA IA =====
+        let iaNivelAtual = 1;
+        let totalPartidas = 0;
+        let revancheEmAndamento = false;
+
+        // ===== ESTADO DA CORRIDA =====
+        let running = false;
+        let animId = null;
+        let fimCorrida = false;
+        let vencedor = null;
+        let botIdAtual = null;
+
+        // Player
+        let velocidade = 0;
+        let distancia = 0;
+        let posX = 100;
+        const POS_INICIAL = 100;
+
+        // Bot
+        let botVelocidade = 0;
+        let botDistancia = 0;
+        let botPosX = 100;
+        let botPotencia = 65;
+        let botNomeCarro = 'fusca';
+
+        let botConfig = {
+            motor: '1.6',
+            turbo: '0.6',
+            pressao: 1.2,
+            relacao: '3.7',
+            pneu: '1.0'
+        };
+
+        let tempoCorrida = 0;
+        let potenciaBase = 80;
+        let peso = 1000;
+        let coeficienteAerod = 0.38;
+        let tracao = 0.9;
+        let rpm = 0;
+        let marchaAtual = 0;
+        const MARCHAS = ['N', '1', '2', '3', '4', '5'];
+
+        // ===== IMAGENS =====
+        const imagensCarros = {};
+        const carregamentoStatus = {};
+        const listaCarros = ['gol', 'fusca', 'opala', 'chevette', 'brasilia', 'monza', 'civic'];
+
+        const carros = {
+            gol: { nome: 'Gol', peso: 920, cv: 72, aerod: 0.42, tracao: 0.88, cor: '#2a7fc9' },
+            fusca: { nome: 'Fusca', peso: 850, cv: 65, aerod: 0.48, tracao: 0.82, cor: '#b8b040' },
+            opala: { nome: 'Opala', peso: 1150, cv: 140, aerod: 0.36, tracao: 0.92, cor: '#c0392b' },
+            chevette: { nome: 'Chevette', peso: 880, cv: 95, aerod: 0.39, tracao: 0.90, cor: '#2c7a5a' },
+            brasilia: { nome: 'Brasília', peso: 800, cv: 60, aerod: 0.45, tracao: 0.80, cor: '#d48c34' },
+            monza: { nome: 'Monza', peso: 1050, cv: 85, aerod: 0.40, tracao: 0.87, cor: '#4a7a9c' },
+            civic: { nome: 'Civic', peso: 1100, cv: 130, aerod: 0.34, tracao: 0.93, cor: '#7a9a4a' }
+        };
+
+        const motorMap = { '1.0': 0, '1.6': 15, '2.0': 35, '4.1': 60, '5.0': 90 };
+        const turboMap = { '0': 1.0, '0.6': 1.4, '1.2': 1.9, '2.0': 2.6 };
+        const relacaoMap = { '3.0': 0.85, '3.7': 1.0, '4.5': 1.18 };
+        const pneuMap = { '0.85': 0.85, '1.0': 1.0, '1.15': 1.12 };
+
+        const opcoesMotor = ['1.0', '1.6', '2.0', '4.1', '5.0'];
+        const opcoesTurbo = ['0', '0.6', '1.2', '2.0'];
+        const opcoesRelacao = ['3.0', '3.7', '4.5'];
+        const opcoesPneu = ['0.85', '1.0', '1.15'];
+
+        // ===== FUNÇÕES DA IA =====
+        function getBotCar() {
+            const playerId = carroSelect.value;
+            const options = listaCarros.filter(id => id !== playerId);
+            return options[Math.floor(Math.random() * options.length)];
+        }
+
+        function calcularBonusIA(nivel) {
+            return (nivel - 1) * 0.25;
+        }
+
+        function gerarConfiguracaoBot(nivel) {
+            const bonus = calcularBonusIA(nivel);
+            const dificuldadeInfo = getDificuldadePorNivel(nivel);
+            const fator = dificuldadeInfo.fator;
+
+            const motorIdx = Math.min(Math.floor(nivel / 1.5), opcoesMotor.length - 1);
+            const turboIdx = Math.min(Math.floor(nivel / 2), opcoesTurbo.length - 1);
+            const relacaoIdx = Math.min(Math.floor(nivel / 2.5), opcoesRelacao.length - 1);
+            const pneuIdx = Math.min(Math.floor(nivel / 3), opcoesPneu.length - 1);
+
+            const chanceAleatorio = Math.max(0.1, 0.5 - (nivel - 1) * 0.04);
+            const aleatorio = Math.random();
+
+            const motor = aleatorio < chanceAleatorio ? opcoesMotor[Math.floor(Math.random() * opcoesMotor.length)] : opcoesMotor[motorIdx];
+            const turbo = aleatorio < chanceAleatorio ? opcoesTurbo[Math.floor(Math.random() * opcoesTurbo.length)] : opcoesTurbo[turboIdx];
+            const relacao = aleatorio < chanceAleatorio ? opcoesRelacao[Math.floor(Math.random() * opcoesRelacao.length)] : opcoesRelacao[relacaoIdx];
+            const pneu = aleatorio < chanceAleatorio ? opcoesPneu[Math.floor(Math.random() * opcoesPneu.length)] : opcoesPneu[pneuIdx];
+
+            const pressaoMin = 0.5 + (nivel - 1) * 0.12;
+            const pressaoMax = Math.min(2.8, 1.0 + (nivel - 1) * 0.18);
+            const pressao = parseFloat((pressaoMin + Math.random() * (pressaoMax - pressaoMin)).toFixed(1));
+
+            return {
+                motor: motor,
+                turbo: turbo,
+                pressao: pressao,
+                relacao: relacao,
+                pneu: pneu,
+                bonus: bonus,
+                fator: fator
+            };
+        }
+
+        function getBotPotencia(botId, config) {
+            const base = carros[botId].cv;
+            const motorCv = motorMap[config.motor] || 0;
+            const turboMult = turboMap[config.turbo] || 1.0;
+            const pressao = config.pressao || 1.0;
+
+            let cvTotal = (base + motorCv) * turboMult * (0.8 + 0.2 * pressao);
+            cvTotal = cvTotal * (1 + config.bonus);
+            cvTotal = cvTotal * config.fator;
+            const variacao = (Math.random() * 20 - 10);
+            cvTotal = cvTotal + variacao;
+
+            return Math.max(30, Math.round(cvTotal));
+        }
+
+        function inicializarAdversario(manterCarro = false) {
+            if (!manterCarro || !botIdAtual) {
+                botIdAtual = getBotCar();
+            }
+            botNomeCarro = botIdAtual;
+            botConfig = gerarConfiguracaoBot(iaNivelAtual);
+            botPotencia = getBotPotencia(botIdAtual, botConfig);
+
+            botNome.textContent = carros[botIdAtual].nome;
+            botPot.textContent = botPotencia + 'cv';
+
+            iaNivel.textContent = iaNivelAtual;
+            iaNivelFooter.textContent = iaNivelAtual;
+            partidasCount.textContent = totalPartidas;
+
+            atualizarDificuldadeBadge(iaNivelAtual);
+            atualizarDinheiro();
+
+            console.log('🧠 IA NÍVEL ' + iaNivelAtual + ' - Dificuldade: ' + getDificuldadePorNivel(iaNivelAtual).nome);
+            console.log('📈 Bônus: +' + Math.round(botConfig.bonus * 100) + '% | Fator: ' + botConfig.fator);
+            console.log('🤖 ADVERSÁRIO: ' + carros[botIdAtual].nome + ' (' + botPotencia + 'cv)');
+        }
+
+        function resetarIA() {
+            iaNivelAtual = 1;
+            totalPartidas = 0;
+            revancheCounter = 0;
+            botIdAtual = null;
+            inicializarAdversario();
+            btnLargada.disabled = false;
+            btnNovaPartida.disabled = false;
+            btnTrocarCarro.disabled = false;
+            btnResetIA.disabled = false;
+            btnLargada.textContent = '🏁 ARRANCADA';
+            atualizarPainel();
+            desenharCena();
+            atualizarDinheiro();
+            console.log('🔄 IA RESETADA! Nível 1 - Dificuldade: Fácil');
+        }
+
+        // ===== CRIAR IMAGEM EXEMPLO =====
+        function criarImagemExemplo(id) {
+            const canvasTemp = document.createElement('canvas');
+            canvasTemp.width = 800;
+            canvasTemp.height = 440;
+            const ctxTemp = canvasTemp.getContext('2d');
+
+            ctxTemp.clearRect(0, 0, 800, 440);
+            const carro = carros[id];
+            const cor = carro?.cor || '#e03a3a';
+
+            ctxTemp.shadowColor = 'rgba(0,0,0,0.4)';
+            ctxTemp.shadowBlur = 40;
+            ctxTemp.shadowOffsetY = 14;
+
+            ctxTemp.fillStyle = cor;
+            ctxTemp.beginPath();
+            ctxTemp.roundRect(50, 100, 700, 220, 28);
+            ctxTemp.fill();
+
+            ctxTemp.fillStyle = '#1a2a33';
+            ctxTemp.beginPath();
+            ctxTemp.roundRect(190, 50, 320, 80, 20);
+            ctxTemp.fill();
+
+            ctxTemp.shadowBlur = 0;
+            ctxTemp.fillStyle = '#7ab3d9';
+            ctxTemp.beginPath();
+            ctxTemp.roundRect(210, 58, 100, 44, 10);
+            ctxTemp.fill();
+            ctxTemp.beginPath();
+            ctxTemp.roundRect(390, 58, 100, 44, 10);
+            ctxTemp.fill();
+
+            ctxTemp.shadowBlur = 20;
+            ctxTemp.fillStyle = '#f5e56b';
+            ctxTemp.beginPath();
+            ctxTemp.arc(75, 205, 32, 0, Math.PI * 2);
+            ctxTemp.fill();
+            ctxTemp.beginPath();
+            ctxTemp.arc(725, 205, 32, 0, Math.PI * 2);
+            ctxTemp.fill();
+
+            ctxTemp.shadowBlur = 16;
+            ctxTemp.fillStyle = '#1f1f1f';
+            ctxTemp.beginPath();
+            ctxTemp.ellipse(180, 325, 58, 44, 0, 0, Math.PI * 2);
+            ctxTemp.fill();
+            ctxTemp.beginPath();
+            ctxTemp.ellipse(620, 325, 58, 44, 0, 0, Math.PI * 2);
+            ctxTemp.fill();
+
+            ctxTemp.shadowBlur = 0;
+            ctxTemp.fillStyle = '#eef7fc';
+            ctxTemp.font = 'bold 52px Orbitron, monospace';
+            ctxTemp.textAlign = 'center';
+            ctxTemp.fillText(id.toUpperCase(), 400, 32);
+
+            ctxTemp.fillStyle = '#f5c542';
+            ctxTemp.font = '36px Orbitron, monospace';
+            ctxTemp.fillText(carro?.cv + 'cv', 400, 405);
+
+            ctxTemp.fillStyle = 'rgba(245,197,66,0.7)';
+            ctxTemp.font = 'bold 32px Orbitron, monospace';
+            ctxTemp.fillText('🔶 EXEMPLO', 400, 358);
+
+            const img = new Image();
+            img.src = canvasTemp.toDataURL('image/png');
+            return img;
+        }
+
+        // ===== CARREGAR IMAGENS =====
+        function carregarTodasImagens() {
+            let carregadas = 0;
+            const total = listaCarros.length;
+            let debugLines = [];
+
+            listaCarros.forEach(id => {
+                const img = new Image();
+                const caminho = `img/${id}.png`;
+
+                img.onload = function() {
+                    imagensCarros[id] = img;
+                    carregamentoStatus[id] = 'ok';
+                    carregadas++;
+                    debugLines.push(`✅ ${caminho} - CARREGADO`);
+                    atualizarDebug(debugLines);
+                    atualizarContador();
+                    desenharCena();
+                };
+
+                img.onerror = function() {
+                    const imgExemplo = criarImagemExemplo(id);
+                    imgExemplo.onload = function() {
+                        imagensCarros[id] = imgExemplo;
+                        carregamentoStatus[id] = 'exemplo';
+                        carregadas++;
+                        debugLines.push(`🟡 ${caminho} - NÃO ENCONTRADO (usando exemplo)`);
+                        atualizarDebug(debugLines);
+                        atualizarContador();
+                        desenharCena();
+                    };
+                };
+
+                img.src = caminho;
+            });
+        }
+
+        function atualizarDebug(lines) {
+            const recentes = lines.slice(-10);
+            debugInfo.innerHTML = recentes.join('<br>');
+        }
+
+        function atualizarContador() {
+            const ok = Object.values(carregamentoStatus).filter(s => s === 'ok').length;
+            const exemplo = Object.values(carregamentoStatus).filter(s => s === 'exemplo').length;
+            templateCount.textContent = `${ok + exemplo}/${listaCarros.length}`;
+        }
+
+        function temImagem(carroId) {
+            return imagensCarros[carroId] &&
+                imagensCarros[carroId].complete &&
+                imagensCarros[carroId].naturalWidth > 0;
+        }
+
+        // ===== PARÂMETROS DO JOGADOR =====
+        function atualizarParametros() {
+            const carroId = carroSelect.value;
+            const carro = carros[carroId];
+            if (!carro) return;
+
+            // Verifica se o carro está comprado
+            if (!isItemComprado('carro', carroId)) {
+                if (isItemComprado('carro', 'opala')) {
+                    carroSelect.value = 'opala';
+                    valoresAtuais.carro = 'opala';
+                    atualizarBotoesCompra();
+                    return;
+                }
+                for (const c of listaCarros) {
+                    if (isItemComprado('carro', c)) {
+                        carroSelect.value = c;
+                        valoresAtuais.carro = c;
+                        atualizarBotoesCompra();
+                        return;
+                    }
+                }
+                carroSelect.value = 'opala';
+                valoresAtuais.carro = 'opala';
+                atualizarBotoesCompra();
+                return;
+            }
+
+            // Verifica cada modificação
+            const motorValor = motorSelect.value;
+            const turboValor = turboSelect.value;
+            const pressaoValor = parseFloat(pressaoTurbo.value).toFixed(1);
+            const relacaoValor = relacaoSelect.value;
+            const pneuValor = pneuSelect.value;
+
+            if (!isItemComprado('motor', motorValor)) {
+                if (isItemComprado('motor', valoresAtuais.motor)) {
+                    motorSelect.value = valoresAtuais.motor;
+                } else {
+                    motorSelect.value = '1.6';
+                    valoresAtuais.motor = '1.6';
+                }
+                atualizarBotoesCompra();
+                return;
+            }
+
+            if (!isItemComprado('turbo', turboValor)) {
+                if (isItemComprado('turbo', valoresAtuais.turbo)) {
+                    turboSelect.value = valoresAtuais.turbo;
+                } else {
+                    turboSelect.value = '0.6';
+                    valoresAtuais.turbo = '0.6';
+                }
+                atualizarBotoesCompra();
+                return;
+            }
+
+            if (!isItemComprado('pressao', pressaoValor)) {
+                if (isItemComprado('pressao', valoresAtuais.pressao.toFixed(1))) {
+                    pressaoTurbo.value = valoresAtuais.pressao;
+                    pressaoLabel.textContent = valoresAtuais.pressao.toFixed(1);
+                } else {
+                    pressaoTurbo.value = 1.2;
+                    valoresAtuais.pressao = 1.2;
+                    pressaoLabel.textContent = '1.2';
+                }
+                atualizarBotoesCompra();
+                return;
+            }
+
+            if (!isItemComprado('relacao', relacaoValor)) {
+                if (isItemComprado('relacao', valoresAtuais.relacao)) {
+                    relacaoSelect.value = valoresAtuais.relacao;
+                } else {
+                    relacaoSelect.value = '3.7';
+                    valoresAtuais.relacao = '3.7';
+                }
+                atualizarBotoesCompra();
+                return;
+            }
+
+            if (!isItemComprado('pneu', pneuValor)) {
+                if (isItemComprado('pneu', valoresAtuais.pneu)) {
+                    pneuSelect.value = valoresAtuais.pneu;
+                } else {
+                    pneuSelect.value = '1.0';
+                    valoresAtuais.pneu = '1.0';
+                }
+                atualizarBotoesCompra();
+                return;
+            }
+
+            const motorCv = motorMap[motorSelect.value] || 0;
+            const turboMult = turboMap[turboSelect.value] || 1.0;
+            const pressao = parseFloat(pressaoTurbo.value) || 1.0;
+            const relacao = relacaoMap[relacaoSelect.value] || 1.0;
+            const pneu = pneuMap[pneuSelect.value] || 1.0;
+
+            let cvTotal = carro.cv + motorCv;
+            cvTotal = cvTotal * turboMult * (0.8 + 0.2 * pressao);
+            peso = carro.peso;
+            coeficienteAerod = carro.aerod * (1.0 - (pressao - 0.5) * 0.02);
+            if (coeficienteAerod < 0.25) coeficienteAerod = 0.25;
+            tracao = carro.tracao * pneu * (0.9 + 0.1 * (relacao / 1.0));
+            if (tracao > 1.3) tracao = 1.3;
+
+            potenciaBase = Math.round(cvTotal);
+            potenciaDisplay.textContent = potenciaBase;
+
+            const turboVal = turboSelect.value;
+            turboStatus.textContent = turboVal === '0' ? 'OFF' : turboVal + 'bar';
+        }
+
+        // ===== FÍSICA =====
+        function stepPlayer(dt) {
+            if (!running || fimCorrida) return;
+
+            const cv = potenciaBase;
+            const rel = relacaoMap[relacaoSelect.value] || 1.0;
+            let forcaMotor = cv * 85.5 * rel * (0.9 + 0.1 * (pressaoTurbo.value / 1.0));
+            const vMs = velocidade / 3.6;
+            const arrasto = 0.5 * 1.225 * coeficienteAerod * 2.2 * (vMs * vMs) * 0.3;
+            const rolamento = 0.005 * peso * 9.8;
+
+            const forcaMaxTracao = tracao * peso * 9.8 * 1.2;
+            let forcaLiquida = forcaMotor - arrasto - rolamento;
+            if (forcaLiquida > forcaMaxTracao) forcaLiquida = forcaMaxTracao;
+            if (forcaLiquida < 0) forcaLiquida = 0;
+
+            const aceleracao = forcaLiquida / peso;
+            let novaVel = velocidade + aceleracao * dt * 12.0;
+            if (novaVel < 0) novaVel = 0;
+            const vMax = Math.min(2000, Math.sqrt((cv * 350) / (0.5 * 1.225 * coeficienteAerod * 2.2)));
+            if (novaVel > vMax) novaVel = vMax;
+
+            velocidade = novaVel;
+            const metros = velocidade / 3.6 * dt;
+            distancia += metros;
+            posX = POS_INICIAL + distancia * 4.0;
+            if (posX > 1620) posX = 1620;
+
+            rpm = Math.min(25000, velocidade * 85 * rel);
+            marchaAtual = Math.min(5, Math.floor(velocidade / 120) + 1);
+            if (velocidade < 5) marchaAtual = 0;
+
+            playerVel.textContent = Math.round(velocidade);
+        }
+
+        function stepBot(dt) {
+            if (!running || fimCorrida) return;
+
+            const botId = botNomeCarro.toLowerCase();
+            const carro = carros[botId];
+            if (!carro) return;
+
+            const motorCvBot = motorMap[botConfig.motor] || 0;
+            const turboMultBot = turboMap[botConfig.turbo] || 1.0;
+            const pressaoBot = botConfig.pressao || 1.0;
+            const relacaoBot = relacaoMap[botConfig.relacao] || 1.0;
+            const pneuBot = pneuMap[botConfig.pneu] || 1.0;
+
+            const cvBot = botPotencia;
+            const pesoBot = carro.peso;
+            const aerodBot = carro.aerod;
+            const tracaoBot = carro.tracao * pneuBot * (0.9 + 0.1 * (relacaoBot / 1.0));
+
+            let forcaMotor = cvBot * 85.5 * relacaoBot * (0.9 + 0.1 * pressaoBot);
+            const vMsBot = botVelocidade / 3.6;
+            const arrastoBot = 0.5 * 1.225 * aerodBot * 2.2 * (vMsBot * vMsBot) * 0.3;
+            const rolamentoBot = 0.005 * pesoBot * 9.8;
+
+            const forcaMaxTracaoBot = Math.min(tracaoBot * pesoBot * 9.8 * 1.2, 20000);
+            let forcaLiquidaBot = forcaMotor - arrastoBot - rolamentoBot;
+            if (forcaLiquidaBot > forcaMaxTracaoBot) forcaLiquidaBot = forcaMaxTracaoBot;
+            if (forcaLiquidaBot < 0) forcaLiquidaBot = 0;
+
+            const aceleracaoBot = forcaLiquidaBot / pesoBot;
+            let novaVelBot = botVelocidade + aceleracaoBot * dt * 12.0;
+            if (novaVelBot < 0) novaVelBot = 0;
+            const vMaxBot = Math.min(1900, Math.sqrt((cvBot * 330) / (0.5 * 1.225 * aerodBot * 2.2)));
+            if (novaVelBot > vMaxBot) novaVelBot = vMaxBot;
+
+            botVelocidade = novaVelBot;
+            const metrosBot = botVelocidade / 3.6 * dt;
+            botDistancia += metrosBot;
+            botPosX = POS_INICIAL + botDistancia * 4.0;
+            if (botPosX > 1620) botPosX = 1620;
+
+            botVel.textContent = Math.round(botVelocidade);
+        }
+
+        // ===== VERIFICAR VENCEDOR =====
+        function verificarVencedor() {
+            if (posX >= 1620 || botPosX >= 1620) {
+                fimCorrida = true;
+                running = false;
+                if (posX >= 1620 && botPosX >= 1620) {
+                    vencedor = posX > botPosX ? 'player' : (botPosX > posX ? 'bot' : 'empate');
+                } else if (posX >= 1620) {
+                    vencedor = 'player';
+                } else {
+                    vencedor = 'bot';
+                }
+                btnLargada.disabled = false;
+                btnNovaPartida.disabled = false;
+                btnTrocarCarro.disabled = false;
+                btnResetIA.disabled = false;
+
+                if (revancheEmAndamento) {
+                    iaNivelAtual++;
+                    totalPartidas++;
+                    revancheCounter++;
+                    inicializarAdversario(true);
+                    console.log('🔄 REVANCHE! IA subiu para Nível ' + iaNivelAtual);
+                }
+                revancheEmAndamento = false;
+
+                btnLargada.textContent = '🏁 REVANCHE';
+
+                if (vencedor) {
+                    processarAposta(vencedor);
+                }
+
+                if (animId) cancelAnimationFrame(animId);
+                atualizarPainel();
+                desenharCena();
+                return true;
+            }
+            return false;
+        }
+
+        // ===== ATUALIZAR PAINEL =====
+        function atualizarPainel() {
+            rpmDisplay.textContent = Math.round(rpm);
+            marchaDisplay.textContent = MARCHAS[marchaAtual] || 'N';
+            distanciaDisplay.textContent = distancia.toFixed(1);
+            tempoDisplay.textContent = tempoCorrida.toFixed(2);
+
+            const pct = Math.min(100, (rpm / 22000) * 100);
+            barraRPM.style.width = pct + '%';
+
+            playerStatus.textContent = running ? '●' : '○';
+            playerStatus.style.color = running ? '#6bff6b' : '#4a7a8a';
+            botStatus.textContent = running ? '●' : '○';
+            botStatus.style.color = running ? '#ff6b4a' : '#4a7a8a';
+        }
+
+        // ===== DESENHO =====
+        function desenharCena() {
+            ctx.clearRect(0, 0, W, H);
+
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, 280);
+            skyGrad.addColorStop(0, '#080e14');
+            skyGrad.addColorStop(0.5, '#0f1f2a');
+            skyGrad.addColorStop(1, '#1a2a33');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, W, 280);
+
+            const grad = ctx.createLinearGradient(0, 240, 0, 850);
+            grad.addColorStop(0, '#1a2a33');
+            grad.addColorStop(0.2, '#243a45');
+            grad.addColorStop(0.5, '#1f323d');
+            grad.addColorStop(0.8, '#1a2a33');
+            grad.addColorStop(1, '#0b1219');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 240, W, 760);
+
+            ctx.strokeStyle = 'rgba(80, 140, 170, 0.3)';
+            ctx.lineWidth = 6;
+            ctx.setLineDash([50, 60]);
+            ctx.beginPath();
+            ctx.moveTo(0, 480);
+            ctx.lineTo(W, 480);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = 'rgba(60, 100, 120, 0.15)';
+            ctx.lineWidth = 8;
+            ctx.beginPath();
+            ctx.moveTo(0, 290);
+            ctx.lineTo(W, 290);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, 670);
+            ctx.lineTo(W, 670);
+            ctx.stroke();
+
+            ctx.shadowColor = 'rgba(217, 63, 63, 0.3)';
+            ctx.shadowBlur = 40;
+            ctx.fillStyle = 'rgba(217, 63, 63, 0.8)';
+            ctx.fillRect(1640, 240, 28, 440);
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = '#4a7a8a';
+            ctx.font = 'bold 24px Orbitron, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('CHEGADA', 1654, 210);
+            ctx.textAlign = 'left';
+
+            for (let i = 0; i < 9; i++) {
+                const x = 100 + i * 200;
+                ctx.fillStyle = 'rgba(60, 100, 120, 0.1)';
+                ctx.fillRect(x, 50, 6, 180);
+                ctx.fillStyle = 'rgba(60, 100, 120, 0.12)';
+                ctx.beginPath();
+                ctx.arc(x + 3, 50, 12, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            const playerId = carroSelect.value;
+            const playerCarro = carros[playerId];
+            const botId = botNomeCarro.toLowerCase();
+            const botCarro = carros[botId];
+
+            // ===== BOT =====
+            const botY = 310;
+            if (temImagem(botId)) {
+                const img = imagensCarros[botId];
+                const largura = 340;
+                const altura = 185;
+                const dx = botPosX - 92;
+                const dy = botY - 78;
+
+                ctx.shadowColor = 'rgba(180,74,255,0.15)';
+                ctx.shadowBlur = 25;
+                ctx.shadowOffsetY = 8;
+                ctx.drawImage(img, dx, dy, largura, altura);
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+
+                ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                ctx.beginPath();
+                ctx.roundRect(dx, dy - 40, largura, 36, 6);
+                ctx.fill();
+
+                ctx.fillStyle = '#b44aff';
+                ctx.font = 'bold 20px Orbitron, monospace';
+                ctx.fillText('🧠 ' + (botCarro?.nome || 'Bot'), dx + 14, dy - 14);
+                ctx.fillStyle = '#f5c542';
+                ctx.font = '16px Orbitron, monospace';
+                ctx.fillText(botPotencia + 'cv', dx + largura - 80, dy - 14);
+            } else {
+                ctx.fillStyle = '#1a2a3a';
+                ctx.fillRect(botPosX - 92, botY - 78, 340, 185);
+                ctx.strokeStyle = '#3a5a6a';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 8]);
+                ctx.strokeRect(botPosX - 92, botY - 78, 340, 185);
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#4a6a7a';
+                ctx.font = 'bold 18px Orbitron, monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('🧠 ' + (botCarro?.nome || 'Bot'), botPosX + 78, botY + 20);
+                ctx.textAlign = 'left';
+            }
+
+            ctx.fillStyle = '#b44aff';
+            ctx.font = 'bold 14px Orbitron, monospace';
+            ctx.fillText('🧠 IA NÍVEL ' + iaNivelAtual, botPosX - 76, botY - 90);
+
+            // ===== JOGADOR =====
+            const playerY = 540;
+            if (temImagem(playerId)) {
+                const img = imagensCarros[playerId];
+                const largura = 390;
+                const altura = 215;
+                const dx = posX - 107;
+                const dy = playerY - 98;
+
+                ctx.shadowColor = 'rgba(0,200,255,0.15)';
+                ctx.shadowBlur = 35;
+                ctx.shadowOffsetY = 12;
+                ctx.drawImage(img, dx, dy, largura, altura);
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetY = 0;
+
+                ctx.fillStyle = 'rgba(0,0,0,0.75)';
+                ctx.beginPath();
+                ctx.roundRect(dx, dy - 48, largura, 42, 8);
+                ctx.fill();
+
+                ctx.fillStyle = '#6bff6b';
+                ctx.font = 'bold 24px Orbitron, monospace';
+                ctx.fillText('🏁 ' + (playerCarro?.nome || 'Jogador'), dx + 18, dy - 17);
+                ctx.fillStyle = '#f5c542';
+                ctx.font = '18px Orbitron, monospace';
+                ctx.fillText(potenciaBase + 'cv', dx + largura - 110, dy - 17);
+
+                if (turboSelect.value !== '0') {
+                    ctx.fillStyle = '#e6852a';
+                    ctx.font = 'bold 20px Orbitron, monospace';
+                    ctx.shadowColor = 'rgba(230, 133, 42, 0.25)';
+                    ctx.shadowBlur = 25;
+                    ctx.fillText('🔥 TURBO', dx + 70, dy + altura + 38);
+                    ctx.shadowBlur = 0;
+                }
+            } else {
+                ctx.fillStyle = '#1a2a3a';
+                ctx.fillRect(posX - 107, playerY - 98, 390, 215);
+                ctx.strokeStyle = '#3a5a6a';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([8, 8]);
+                ctx.strokeRect(posX - 107, playerY - 98, 390, 215);
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#4a6a7a';
+                ctx.font = 'bold 20px Orbitron, monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('SEM IMAGEM', posX + 88, playerY + 25);
+                ctx.textAlign = 'left';
+            }
+
+            ctx.fillStyle = '#6bff6b';
+            ctx.font = 'bold 14px Orbitron, monospace';
+            ctx.fillText('🏁 ' + (playerCarro?.nome || 'Jogador'), posX - 86, playerY - 110);
+
+            if (fimCorrida && vencedor) {
+                const cor = vencedor === 'player' ? '#6bff6b' :
+                    (vencedor === 'bot' ? '#b44aff' : '#f5c542');
+                const texto = vencedor === 'player' ? '🏆 VOCÊ VENCEU! +R$ ' + parseInt(apostaSelect.value) * 2 :
+                    (vencedor === 'bot' ? '🧠 IA VENCEU! -R$ ' + apostaSelect.value : '⚡ EMPATE!');
+                ctx.fillStyle = cor;
+                ctx.font = 'bold 50px Orbitron, monospace';
+                ctx.shadowColor = cor + '60';
+                ctx.shadowBlur = 70;
+                ctx.textAlign = 'center';
+                ctx.fillText(texto, 900, 180);
+                ctx.shadowBlur = 0;
+                ctx.textAlign = 'left';
+            }
+        }
+
+        // ===== LOOP PRINCIPAL =====
+        let lastTimestamp = 0;
+
+        function gameLoop(timestamp) {
+            if (!running) return;
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const dt = Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+            lastTimestamp = timestamp;
+
+            tempoCorrida += dt;
+
+            stepPlayer(dt);
+            stepBot(dt);
+
+            if (!verificarVencedor()) {
+                atualizarPainel();
+                desenharCena();
+                animId = requestAnimationFrame(gameLoop);
+            } else {
+                atualizarPainel();
+                desenharCena();
+            }
+        }
+
+        // ===== INICIAR CORRIDA =====
+        function iniciarCorrida() {
+            if (running) return;
+
+            const valorAposta = parseInt(apostaSelect.value);
+            if (valorAposta > dinheiro) {
+                alert('💰 Você não tem dinheiro suficiente para essa aposta!\nSeu saldo: R$ ' + dinheiro);
+                return;
+            }
+
+            // Reset
+            velocidade = 0;
+            distancia = 0;
+            posX = POS_INICIAL;
+            botVelocidade = 0;
+            botDistancia = 0;
+            botPosX = POS_INICIAL;
+            tempoCorrida = 0;
+            rpm = 0;
+            marchaAtual = 0;
+            fimCorrida = false;
+            vencedor = null;
+            resultadoAposta.style.display = 'none';
+
+            if (!botIdAtual) {
+                inicializarAdversario();
+            }
+
+            botNomeCarro = botIdAtual;
+
+            running = true;
+            revancheEmAndamento = false;
+            btnLargada.disabled = true;
+            btnNovaPartida.disabled = true;
+            btnTrocarCarro.disabled = true;
+            btnResetIA.disabled = true;
+            btnLargada.textContent = '🏁 CORRENDO...';
+
+            atualizarParametros();
+            atualizarPainel();
+
+            if (animId) cancelAnimationFrame(animId);
+            desenharCena();
+            lastTimestamp = 0;
+            animId = requestAnimationFrame(gameLoop);
+        }
+
+        // ===== REVANCHE =====
+        function revanche() {
+            if (running) return;
+            revancheEmAndamento = true;
+            iniciarCorrida();
+        }
+
+        // ===== TROCAR CARRO =====
+        function trocarCarroPago() {
+            if (running) return;
+
+            const carroAtual = carroSelect.value;
+            if (!isItemComprado('carro', carroAtual)) {
+                alert('⚠️ Você precisa comprar este carro primeiro!\nClique em "COMPRAR" ao lado do carro selecionado.\nCusto: R$ ' + getPrecoItem('carro'));
+                return;
+            }
+
+            if (animId) {
+                cancelAnimationFrame(animId);
+                animId = null;
+            }
+
+            velocidade = 0;
+            distancia = 0;
+            posX = POS_INICIAL;
+            botVelocidade = 0;
+            botDistancia = 0;
+            botPosX = POS_INICIAL;
+            tempoCorrida = 0;
+            rpm = 0;
+            marchaAtual = 0;
+            fimCorrida = false;
+            vencedor = null;
+            running = false;
+
+            const novoCarro = carroSelect.value;
+            valoresAtuais.carro = novoCarro;
+            atualizarParametros();
+
+            iaNivelAtual++;
+            totalPartidas++;
+            revancheCounter = 0;
+            inicializarAdversario();
+
+            btnLargada.disabled = false;
+            btnNovaPartida.disabled = false;
+            btnTrocarCarro.disabled = false;
+            btnResetIA.disabled = false;
+            btnLargada.textContent = '🏁 ARRANCADA';
+
+            atualizarPainel();
+            desenharCena();
+            atualizarDinheiro();
+
+            console.log('🚗 TROCAR CARRO! Novo carro: ' + carros[novoCarro].nome);
+        }
+
+        // ===== NOVA PARTIDA =====
+        function novaPartida() {
+            if (running) return;
+
+            if (animId) {
+                cancelAnimationFrame(animId);
+                animId = null;
+            }
+
+            velocidade = 0;
+            distancia = 0;
+            posX = POS_INICIAL;
+            botVelocidade = 0;
+            botDistancia = 0;
+            botPosX = POS_INICIAL;
+            tempoCorrida = 0;
+            rpm = 0;
+            marchaAtual = 0;
+            fimCorrida = false;
+            vencedor = null;
+            running = false;
+
+            iaNivelAtual++;
+            totalPartidas++;
+            revancheCounter = 0;
+            inicializarAdversario();
+
+            btnLargada.disabled = false;
+            btnNovaPartida.disabled = false;
+            btnTrocarCarro.disabled = false;
+            btnResetIA.disabled = false;
+            btnLargada.textContent = '🏁 ARRANCADA';
+
+            atualizarParametros();
+            atualizarPainel();
+            desenharCena();
+            atualizarDinheiro();
+
+            console.log('🔄 NOVA PARTIDA! IA Nível ' + iaNivelAtual + ' - ' + getDificuldadePorNivel(iaNivelAtual).nome);
+        }
+
+        // ===== EVENTOS =====
+        btnLargada.addEventListener('click', function() {
+            if (this.textContent === '🏁 REVANCHE') {
+                revanche();
+            } else {
+                iniciarCorrida();
+            }
+        });
+
+        btnNovaPartida.addEventListener('click', novaPartida);
+        btnTrocarCarro.addEventListener('click', trocarCarroPago);
+        btnResetIA.addEventListener('click', resetarIA);
+
+        // Botões de compra
+        btnComprarCarro.addEventListener('click', function() { comprarItem('carro'); });
+        btnComprarMotor.addEventListener('click', function() { comprarItem('motor'); });
+        btnComprarTurbo.addEventListener('click', function() { comprarItem('turbo'); });
+        btnComprarPressao.addEventListener('click', function() { comprarItem('pressao'); });
+        btnComprarRelacao.addEventListener('click', function() { comprarItem('relacao'); });
+        btnComprarPneu.addEventListener('click', function() { comprarItem('pneu'); });
+
+        // Eventos de mudança - atualiza preços e status
+        carroSelect.addEventListener('change', function() {
+            if (!running) {
+                atualizarBotoesCompra();
+                atualizarStatus();
+                if (isItemComprado('carro', this.value)) {
+                    valoresAtuais.carro = this.value;
+                    atualizarParametros();
+                    desenharCena();
+                }
+            }
+        });
+
+        motorSelect.addEventListener('change', function() {
+            if (!running) {
+                atualizarBotoesCompra();
+                atualizarStatus();
+                if (isItemComprado('motor', this.value)) {
+                    valoresAtuais.motor = this.value;
+                    atualizarParametros();
+                    desenharCena();
+                }
+            }
+        });
+
+        turboSelect.addEventListener('change', function() {
+            if (!running) {
+                atualizarBotoesCompra();
+                atualizarStatus();
+                if (isItemComprado('turbo', this.value)) {
+                    valoresAtuais.turbo = this.value;
+                    atualizarParametros();
+                    desenharCena();
+                }
+            }
+        });
+
+        pressaoTurbo.addEventListener('input', function() {
+            pressaoLabel.textContent = parseFloat(this.value).toFixed(1);
+            if (!running) {
+                atualizarBotoesCompra();
+                atualizarStatus();
+                const valor = parseFloat(this.value).toFixed(1);
+                if (isItemComprado('pressao', valor)) {
+                    valoresAtuais.pressao = parseFloat(valor);
+                    atualizarParametros();
+                    desenharCena();
+                }
+            }
+        });
+
+        relacaoSelect.addEventListener('change', function() {
+            if (!running) {
+                atualizarBotoesCompra();
+                atualizarStatus();
+                if (isItemComprado('relacao', this.value)) {
+                    valoresAtuais.relacao = this.value;
+                    atualizarParametros();
+                    desenharCena();
+                }
+            }
+        });
+
+        pneuSelect.addEventListener('change', function() {
+            if (!running) {
+                atualizarBotoesCompra();
+                atualizarStatus();
+                if (isItemComprado('pneu', this.value)) {
+                    valoresAtuais.pneu = this.value;
+                    atualizarParametros();
+                    desenharCena();
+                }
+            }
+        });
+
+        apostaSelect.addEventListener('change', function() {
+            const valor = parseInt(this.value);
+            if (valor > dinheiro) {
+                alert('💰 Você não tem dinheiro suficiente para essa aposta!\nSeu saldo: R$ ' + dinheiro);
+                const options = this.options;
+                for (let i = options.length - 1; i >= 0; i--) {
+                    if (parseInt(options[i].value) <= dinheiro) {
+                        this.value = options[i].value;
+                        break;
+                    }
+                }
+            }
+        });
+
+        // ===== INICIALIZAÇÃO =====
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+                if (r > w / 2) r = w / 2;
+                if (r > h / 2) r = h / 2;
+                this.moveTo(x + r, y);
+                this.lineTo(x + w - r, y);
+                this.quadraticCurveTo(x + w, y, x + w, y + r);
+                this.lineTo(x + w, y + h - r);
+                this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                this.lineTo(x + r, y + h);
+                this.quadraticCurveTo(x, y + h, x, y + h - r);
+                this.lineTo(x, y + r);
+                this.quadraticCurveTo(x, y, x + r, y);
+                this.closePath();
+                return this;
+            };
+        }
+
+        // Itens iniciais comprados
+        itensComprados.carro['opala'] = true;
+        itensComprados.motor['1.6'] = true;
+        itensComprados.turbo['0.6'] = true;
+        itensComprados.pressao['1.2'] = true;
+        itensComprados.relacao['3.7'] = true;
+        itensComprados.pneu['1.0'] = true;
+
+        carregarTodasImagens();
+        atualizarParametros();
+        atualizarPainel();
+        desenharCena();
+        atualizarDinheiro();
+        atualizarBotoesCompra();
+        atualizarStatus();
+
+        inicializarAdversario();
+
+        console.log('🏁 Drag Race BR - COMPRE MODIFICAÇÕES');
+        console.log('💰 Selecione o nível desejado e depois clique em COMPRAR!');
+        console.log('💸 Quanto melhor o nível, mais caro!');
+        console.log('💰 Dinheiro inicial: R$ 10000');
+        console.log('🏆 Ganhe corridas para comprar mais modificações!');
+    })();
+</script>
+</body>
+</html>
